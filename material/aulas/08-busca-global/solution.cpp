@@ -29,11 +29,38 @@ bool compareByValue(const Item& a, const Item& b) {
     return a.valor > b.valor;
 }
 
+//using recursion to atemp a brute force solution
+//vector of itens V, capacity W, number of itens N
+int compareByRecusrion(vector<Item> v, int W, int N) {
+    // Base case: No more items or no capacity left
+    if (N == 0 || W == 0) {
+        return 0;
+    }
+
+    // Consider the current item
+    Item item = v[N - 1]; // Note the N - 1 index
+    int pathA = 0;
+    int pathB = 0;
+
+    // If the current item can fit in the knapsack
+    if (item.peso <= W) {
+        // Calculate the value when including the item
+        
+        pathA = item.valor + compareByRecusrion(v, W - item.peso, N - 1);
+    }
+
+    // Calculate the value when excluding the item
+    pathB = compareByRecusrion(v, W, N - 1);
+
+    // Return the maximum of the two paths
+    return max(pathA, pathB);
+}
 void printer(vector<Item> v);
 void knapsack_pusher(vector<Item> v, int W, vector<Item>& knapsack);
 
+
 int main() {
-    std::string file_name = "in1.txt";
+    std::string file_name = "in-aula.txt";
     std::ifstream file(file_name);
 
     if (!file.is_open()) {
@@ -60,10 +87,13 @@ int main() {
 
     file.close();
     printer(objects);
+    int welp;
+    welp = compareByRecusrion(objects, W, N);
+
+    cout << "result of recursive brute force: " << welp << "\n";
 
     vector<Item> selectedItemsWeightFirst;
     vector<Item> selectedItemsCostFirst;
-
 
     // Sort selectedItemsWeightFirst by weight
     sort(objects.begin(), objects.end(), compareByWeight);
